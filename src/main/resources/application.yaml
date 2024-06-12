@@ -1,1 +1,19 @@
-spring.application.name=individuals-api
+server:
+  port: 8083
+spring:
+  application:
+    name: reactive-greetings-app
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/orchestrator
+
+keycloak:
+    admin:
+      server-url: http://localhost:8180/
+      realm: orchestrator
+      resource: individuals-cli
+      credentials:
+        secret: nbMPojc3q2Uxmnk5IhxqEZscUVHB5ZPM
+

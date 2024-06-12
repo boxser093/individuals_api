@@ -1,1 +1,23 @@
 services:
+  keycloak:
+    image: keycloak/keycloak:latest
+    container_name: keycloak
+    env_file: keycloak.env
+    ports:
+      - "8180:8080"
+    command:
+      - start-dev
+    depends_on:
+      - keycloak_db
+
+  keycloak_db:
+    image: postgres:latest
+    container_name: keycloak_db
+    env_file: keycloak.env
+    ports:
+      - "5440:5432"
+    volumes:
+      - keycloak_db:/var/lib/postgresql/data
+
+volumes:
+  keycloak_db:
