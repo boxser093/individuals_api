@@ -526,6 +526,8 @@
       "clientRoles": {
         "realm-management": [
           "manage-users",
+          "query-users",
+          "manage-realm",
           "realm-admin",
           "view-authorization",
           "view-users",
@@ -793,7 +795,6 @@
       ]
     },
     {
-      "id": "680c6f5f-67b3-4a13-8f8e-6dddd1b468ae",
       "clientId": "individuals-cli",
       "name": "",
       "description": "",
@@ -804,7 +805,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "nbMPojc3q2Uxmnk5IhxqEZscUVHB5ZPM",
       "redirectUris": [
         "/*"
       ],
@@ -834,7 +835,6 @@
       "nodeReRegistrationTimeout": -1,
       "protocolMappers": [
         {
-          "id": "d81f659b-6e21-4144-ad16-bd1511ca8ef6",
           "name": "Client ID",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usersessionmodel-note-mapper",
@@ -849,7 +849,6 @@
           }
         },
         {
-          "id": "1c765f9a-3631-473d-b0e8-86dcb21f9861",
           "name": "Client IP Address",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usersessionmodel-note-mapper",
@@ -864,7 +863,6 @@
           }
         },
         {
-          "id": "9d399fa8-5fb7-42ab-a61b-55078c3bcdf6",
           "name": "Client Host",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usersessionmodel-note-mapper",
@@ -893,24 +891,10 @@
         "phone",
         "offline_access"
       ],
-      "authorizationSettings": {
-        "allowRemoteResourceManagement": true,
-        "policyEnforcementMode": "ENFORCING",
-        "resources": [
-          {
-            "name": "Default Resource",
-            "type": "urn:individuals-cli:resources:default",
-            "ownerManagedAccess": false,
-            "attributes": {},
-            "_id": "da6fbe8c-bf53-40b5-b0d0-95605e248511",
-            "uris": [
-              "/*"
-            ]
-          }
-        ],
-        "policies": [],
-        "scopes": [],
-        "decisionStrategy": "UNANIMOUS"
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
       }
     },
     {

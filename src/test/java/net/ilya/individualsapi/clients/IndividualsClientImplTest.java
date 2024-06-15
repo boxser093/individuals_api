@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class IndividualsClientTest {
+class IndividualsClientImplTest {
 
     @Test
     void getIndividuals() {

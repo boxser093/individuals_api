@@ -1,8 +1,9 @@
 package net.ilya.individualsapi.util;
 
+import net.ilya.individualsapi.dto.request.IndividualRegistrationRequest;
+import net.ilya.individualsapi.dto.request.KeyCloakRegistryCredentials;
 import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.dto.*;
 import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.entity.StatusEntity;
-import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.keycloakdto.KeyCloakRegistryCredentials;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -32,8 +33,8 @@ public class DateUtilService {
                 .status(StatusEntity.ACTIVE)
                 .build();
     }
-    public static IndividualRegisterDTO getIndividualRegistrationDto(){
-        return IndividualRegisterDTO.builder()
+    public static IndividualRegistrationRequest getIndividualRegistrationDto(){
+        return IndividualRegistrationRequest.builder()
                 .build();
     }
     public static IndividualDto getIndividualWithOutDate(){
@@ -59,6 +60,83 @@ public class DateUtilService {
                 .phoneNumber("78235672345")
                 .email("GutsBerserk@javan.sun")
                 .status(StatusEntity.ACTIVE)
+                .userData(build1)
+                .build();
+    }
+    public static IndividualDto getIndividualWithOutDateForUpdate(){
+        CountryDto build = CountryDto.builder()
+                .alpha2("JP")
+                .alpha3("JPS")
+                .name("Japan sun country")
+                .build();
+        AddressDto newYork = AddressDto.builder()
+                .country(build)
+                .city("Tokyo")
+                .address("st. Yakudza 665")
+                .zipCode("360078")
+                .build();
+        UserDto build1 = UserDto.builder()
+                .address(newYork)
+                .firstName("Guts")
+                .lastName("Berserk")
+                .secretKey("Best result")
+                .build();
+        return IndividualDto.builder()
+                .passportNumber("230-004 660 066")
+                .phoneNumber("+495 000 66 77")
+                .email("gutsaftedupdate@japan.sun")
+                .status(StatusEntity.UPDATED)
+                .userData(build1)
+                .build();
+    }
+    public static IndividualDto getIndividualWithDateAfterUpdate(){
+        CountryDto build = CountryDto.builder()
+                .id(1L)
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
+                .alpha2("JP")
+                .alpha3("JPS")
+                .name("Japan sun country")
+                .status(StatusEntity.UPDATED)
+                .build();
+        AddressDto newYork = AddressDto.builder()
+                .country(build)
+                .id(UUID.randomUUID())
+                .countryId(build.getId())
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
+                .archived(LocalDateTime.now())
+                .city("Tokyo")
+                .address("st. Yakudza 665")
+                .zipCode("360078")
+                .build();
+        UserDto build1 = UserDto.builder()
+                .id(UUID.randomUUID())
+                .address(newYork)
+                .addressId(newYork.getId())
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
+                .verifiedAt(LocalDateTime.now())
+                .archivedAt(LocalDateTime.now())
+                .status(StatusEntity.ACTIVE)
+                .filled(true)
+                .firstName("Guts")
+                .lastName("Berserk")
+                .secretKey("Best result")
+                .build();
+
+        return IndividualDto.builder()
+                .id(UUID.randomUUID())
+                .userId(build1.getId())
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
+                .verifiedAt(LocalDateTime.now())
+                .archivedAt(LocalDateTime.now())
+                .status(StatusEntity.UPDATED)
+                .passportNumber("230-004 660 066")
+                .phoneNumber("+495 000 66 77")
+                .email("gutsaftedupdate@japan.sun")
+                .status(StatusEntity.UPDATED)
                 .userData(build1)
                 .build();
     }

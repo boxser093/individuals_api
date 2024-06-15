@@ -1,4 +1,4 @@
-package net.ilya.individualsapi.config;
+package net.ilya.individualsapi.config.clients;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -11,8 +11,10 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
 
 import java.util.concurrent.TimeUnit;
+
 @Configuration
-public class WebClientConfig {
+public class IndividualsServiceClient {
+
         private static final String BASE_URL = "http://localhost:8082/";
         public static final int TIMEOUT = 1000;
 

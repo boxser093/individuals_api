@@ -25,8 +25,4 @@ class KeyCloakServiceImplTest {
     void registerUser() {
     }
 
-    @Test
-    void updateUser() {
-
-    }
 }

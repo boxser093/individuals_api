@@ -9,7 +9,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${keycloak.auth-url}realms/orchestrator
+          issuer-uri: http://localhost:8180/realms/orchestrator
+
 
 keycloak:
   realm: orchestrator
@@ -19,4 +20,3 @@ keycloak:
 logging:
   level:
     root: info
-
