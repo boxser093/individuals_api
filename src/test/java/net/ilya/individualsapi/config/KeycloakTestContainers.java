@@ -21,6 +21,10 @@ public abstract class KeycloakTestContainers {
 
     public static KeycloakContainer keycloakContainer = new KeycloakContainer(KEYCLOAK_IMAGE)
             .withRealmImportFile(realmImportFile)
+            .withEnv("DB_VENDOR", "POSTGRES")
+            .withEnv("DB_URL", "jdbc:postgres:mem:testdb")
+            .withEnv("DB_USER", "postgres")
+            .withEnv("DB_PASSWORD", "")
             .withRamPercentage(50, 70);
 
     static {

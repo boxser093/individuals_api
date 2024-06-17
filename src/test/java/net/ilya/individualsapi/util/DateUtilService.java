@@ -6,6 +6,8 @@ import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.dto.*;
 import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.entity.StatusEntity;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 
 import java.time.LocalDateTime;
@@ -220,5 +222,12 @@ public class DateUtilService {
                 .username("g.berserk")
                 .password("password")
                 .build();
+    }
+    public static JwtAuthenticationToken getToken(){
+        Jwt jwtToken = Jwt.withTokenValue("eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2M0FickhyTm1TNVd2aWhXeG5UV3dsOFIxRTdWVHFQT2NyVlNHMmJ6RVpFIn0.eyJleHAiOjE3MTg1NDg0MDEsImlhdCI6MTcxODU0ODEwMSwianRpIjoiZjBlY2Q1YmItN2VmZC00N2UzLTkwNDAtOTU1MzQwNDBjZDI4IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MTUwNS9yZWFsbXMvb3JjaGVzdHJhdG9yIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjE2YTc5NWQwLWIwZjEtNGNmMS1hNTZkLWFiYTMyZTY0ZTAwYiIsInR5cCI6IkJlYXJlciIsImF6cCI6ImluZGl2aWR1YWxzLWNsaSIsInNlc3Npb25fc3RhdGUiOiI1Y2FhMTRjNS0xMTE4LTRjYWYtYWExNS0yMGQ1MzAxYjE1MjkiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLW9yY2hlc3RyYXRvciJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgbWljcm9wcm9maWxlLWp3dCBwcm9maWxlIiwic2lkIjoiNWNhYTE0YzUtMTExOC00Y2FmLWFhMTUtMjBkNTMwMWIxNTI5IiwidXBuIjoiZy5iZXJzZXJrIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJHdXRzIEJlcnNlcmsiLCJncm91cHMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtb3JjaGVzdHJhdG9yIl0sInByZWZlcnJlZF91c2VybmFtZSI6ImcuYmVyc2VyayIsImdpdmVuX25hbWUiOiJHdXRzIiwiZmFtaWx5X25hbWUiOiJCZXJzZXJrIiwiZW1haWwiOiJndXRzYmVyc2Vya0BqYXZhbi5zdW4iLCJwZXJzb25faWQiOiI5ZjNiMjMyMi1mNTU4LTQ1NDYtOWFkMC00ODE1NDRkMWEwYTAifQ.RDlNsk1wbgKupIQwwMwVOFuk-5wn-zfxbHqlu7okZwJ5vFJZSL-a8vJmb0JV0ciWZwstJrHhEp7bntXvpKbXDn3muLRkT70rxHvJxSJRZQnapeTAp3Z0ByGkfAoWimHxxxf5ycr-_rFppgteyihkHUxGTjxMnMQiJsiXtmZRQmzevwI6HZ6Aja2KKW5JKGHnAdJa6Q0_2whuNi4pHQuqTlk6B88EMDQ6waZJz1OV3sXvY42olbKQFWPLU6ghdMhnOaFfGd95Gz5qJk6rIT5kRArjNWzLg_HVLUqnCOHXAY67_N-8N-vK89KE6TuKWFxtq9HRfXeEHLShZS2nvfST6g]")
+                .header("Authorization", "Bearer ")
+                .claim("ROLE_","USER")
+                .build();
+        return new JwtAuthenticationToken(jwtToken);
     }
 }

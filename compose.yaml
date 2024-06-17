@@ -14,6 +14,9 @@ services:
     image: postgres:latest
     container_name: keycloak_db
     env_file: keycloak.env
+    command:
+      - start-dev
+      - --import-realm
     ports:
       - "5440:5432"
     volumes:

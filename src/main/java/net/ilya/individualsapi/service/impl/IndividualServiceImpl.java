@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.ilya.individualsapi.clients.IndividualsClient;
 import net.ilya.individualsapi.dto.request.AuthenticationRequest;
 import net.ilya.individualsapi.dto.request.IndividualRegistrationRequest;
+import net.ilya.individualsapi.dto.response.AuthenticationResponse;
 import net.ilya.individualsapi.service.IndividualsService;
 import net.ilya.individualsapi.service.KeyCloakService;
+import net.ilya.individualsapi.util.UtilsMethodClass;
 import net.ilya.users._api_microservice_on_webflux.dtoforuserservice.dto.IndividualDto;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -25,22 +27,19 @@ import static net.ilya.individualsapi.util.ApplicationConstants.PERSON_ID_JWT;
 public class IndividualServiceImpl implements IndividualsService {
     private IndividualsClient individualsClient;
     private KeyCloakService keyCloakService;
-
-    //TODO:
-    // 1. Дописать мапперы,
-    // 2. Провертить аргументы и параметры методов,,
+    private UtilsMethodClass utilsMethodClass;
     @Override
     public Mono<IndividualDto> getIndividuals(JwtAuthenticationToken token) {
-        UUID uuid = UUID.fromString(token.getTokenAttributes().get(PERSON_ID_JWT).toString());
+        UUID uuid = utilsMethodClass.parsIdFromToken(token);
         log.info("IN IndividualServiceImpl - getIndividuals {},", uuid);
-        return individualsClient.findById(UUID.fromString(token.getTokenAttributes().get(PERSON_ID_JWT).toString()));
+        return individualsClient.findById(uuid);
     }
 
     @Override
     public Mono<?> createIndividuals(IndividualRegistrationRequest individualRegistrationDto) {
         log.info("IN IndividualServiceImpl - createIndividuals {},", individualRegistrationDto);
         return individualsClient.create(individualRegistrationDto.getIndividualDto())
-                .flatMap(individualDto -> keyCloakService.createUser(this.toUserRepresentation(individualRegistrationDto.toBuilder()
+                .flatMap(individualDto -> keyCloakService.createUser(utilsMethodClass.toUserRepresentation(individualRegistrationDto.toBuilder()
                         .individualDto(individualDto)
                         .build())));
     }
@@ -52,32 +51,10 @@ public class IndividualServiceImpl implements IndividualsService {
     }
 
     @Override
-    public Mono<?> authUser(AuthenticationRequest authenticationRequest) {
+    public Mono<AuthenticationResponse> authUser(AuthenticationRequest authenticationRequest) {
         log.info("IN IndividualServiceImpl - authUser {},", authenticationRequest);
         return keyCloakService.authUser(authenticationRequest);
     }
 
-    @Override
-    public Mono<?> mapToResponse(IndividualDto individualDto) {
-        return null;
-    }
-
-    public UserRepresentation toUserRepresentation(IndividualRegistrationRequest individualDto) {
-        UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(individualDto.getKeyCloakRegistryCredentials().getUsername());
-        newUser.setEnabled(true);
-        newUser.setEmailVerified(true);
-        newUser.setFirstName(individualDto.getIndividualDto().getUserData().getFirstName());
-        newUser.setLastName(individualDto.getIndividualDto().getUserData().getLastName());
-        newUser.setEmail(individualDto.getIndividualDto().getEmail());
-
-        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-        credentialRepresentation.setValue(individualDto.getKeyCloakRegistryCredentials().getPassword());
-        credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-        credentialRepresentation.setTemporary(false);
-        newUser.setCredentials(List.of(credentialRepresentation));
-        newUser.singleAttribute("personId", individualDto.getIndividualDto().getId().toString());
-        return newUser;
-    }
 
 }

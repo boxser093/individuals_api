@@ -14,6 +14,5 @@ public interface IndividualsService {
     Mono<IndividualDto> updateIndividuals(IndividualDto individualDto);
 
     Mono<?> authUser(AuthenticationRequest authenticationRequest);
-    Mono<?> mapToResponse(IndividualDto individualDto);
 
 }

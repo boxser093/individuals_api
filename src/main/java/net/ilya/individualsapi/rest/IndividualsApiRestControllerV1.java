@@ -31,7 +31,7 @@ public class IndividualsApiRestControllerV1 {
         return individualRegisterDTOMono.flatMap(individualsService::createIndividuals);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public Mono<?> updateIndividuals(@RequestBody Mono<IndividualDto> individualDtoMono) {
         return individualDtoMono.flatMap(individualsService::updateIndividuals);
     }

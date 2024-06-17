@@ -2,8 +2,8 @@ package net.ilya.individualsapi.service.impl;
 
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.ilya.individualsapi.dto.request.AuthenticationRequest;
 import net.ilya.individualsapi.dto.request.IndividualRegistrationRequest;
@@ -11,9 +11,9 @@ import net.ilya.individualsapi.dto.response.AuthenticationResponse;
 import net.ilya.individualsapi.dto.response.RegistrationIndividualsResponse;
 import net.ilya.individualsapi.service.KeyCloakService;
 
-import org.keycloak.OAuth2Constants;
+import net.ilya.individualsapi.util.KeycloakClientFactory;
+import net.ilya.individualsapi.util.UtilsMethodClass;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -33,21 +33,23 @@ import static net.ilya.individualsapi.util.ApplicationConstants.*;
 @RequiredArgsConstructor
 public class KeyCloakServiceImpl implements KeyCloakService {
     private final Keycloak keycloak;
-
+    private final KeycloakClientFactory keycloakClientFactory;
+    private final UtilsMethodClass utilsMethodClass;
+    @Setter
     @Value("${keycloak.realm}")
     private String realmName;
+    @Setter
     @Value("${keycloak.client-id}")
     private String clientId;
+    @Setter
     @Value("${keycloak.client-secret}")
     private String clientSecret;
+    @Setter
     @Value("${keycloak.auth-url}")
     private String authServerUrl;
 
-    //TODO:1
-    // 1. Разобраться с переменными класса,
-    // 2. Проверить аутонтификацию и регистрацию.,,
     @Override
-    public Mono<?> createUser(UserRepresentation userRepresentation) {
+    public Mono<RegistrationIndividualsResponse> createUser(UserRepresentation userRepresentation) {
         Response response = keycloak.realm(realmName).users().create(userRepresentation);
         return Mono.just(response).filter(response1 -> response1.getStatus() == 201)
                 .switchIfEmpty(Mono.error(() -> new BadRequestException(FAILED_REGISTRATION)))
@@ -58,53 +60,16 @@ public class KeyCloakServiceImpl implements KeyCloakService {
 
     @Override
     public Mono<AuthenticationResponse> authUser(AuthenticationRequest authenticationRequest) {
+        Keycloak keycloak1 = keycloakClientFactory.getUserClientInstance(authenticationRequest, realmName, clientId, clientSecret, authServerUrl);
         try {
-            AccessTokenResponse accessToken = this.getUserClientInstance(authenticationRequest)
-                    .tokenManager().getAccessToken();
+            AccessTokenResponse accessToken = keycloak1.tokenManager().getAccessToken();
             return Mono.just(accessToken)
-                    .map(this::toShortAccessResponse);
+                    .map(utilsMethodClass::toShortAccessResponse);
         } catch (Exception e) {
             throw new AccessDeniedException(e.getMessage());
         }
     }
 
-    public Keycloak getUserClientInstance(AuthenticationRequest authenticationRequest) {
-        return KeycloakBuilder.builder()
-                .serverUrl(authServerUrl)
-                .realm(realmName)
-                .grantType(OAuth2Constants.PASSWORD)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .username(authenticationRequest.getLogin())
-                .password(authenticationRequest.getPass())
-                .build();
-    }
 
-    public UserRepresentation toUserRepresentation(IndividualRegistrationRequest individualDto) {
-        UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(individualDto.getKeyCloakRegistryCredentials().getUsername());
-        newUser.setEnabled(true);
-        newUser.setEmailVerified(true);
-        newUser.setFirstName(individualDto.getIndividualDto().getUserData().getFirstName());
-        newUser.setLastName(individualDto.getIndividualDto().getUserData().getLastName());
-        newUser.setEmail(individualDto.getIndividualDto().getEmail());
-
-        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-        credentialRepresentation.setValue(individualDto.getKeyCloakRegistryCredentials().getPassword());
-        credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-        credentialRepresentation.setTemporary(false);
-        newUser.setCredentials(List.of(credentialRepresentation));
-        newUser.singleAttribute("personId", individualDto.getIndividualDto().getId().toString());
-        return newUser;
-    }
-
-    private AuthenticationResponse toShortAccessResponse(AccessTokenResponse accessTokenResponse) {
-        return AuthenticationResponse.builder()
-                .accessToken(accessTokenResponse.getToken())
-                .expiresIn(accessTokenResponse.getExpiresIn())
-                .refreshToken(accessTokenResponse.getRefreshToken())
-                .tokenType(accessTokenResponse.getTokenType())
-                .build();
-    }
 
 }
